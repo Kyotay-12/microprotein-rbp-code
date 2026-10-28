@@ -1,0 +1,37 @@
+Post hoc nonlinear occupancy sensitivity
+
+This analysis evaluates specification sensitivity, not causal effects or out-of-sample prediction. The four-df smooths are the primary nonlinear specification; all three- and five-df sensitivity fits are retained. The archived specification describes the implemented analysis; the archive does not establish prospective registration.
+
+## Baseline and cohort
+
+Reproduce the host-length-adjusted occupancy baseline using gene-clustered unweighted OLS, preserving original row order: y=log2(RPF_in+1), ln_rbp=ln(1+nRBP), ln_aa=ln(aa_length), gc=transcript_gc, ln_tpm=ln(1+polyA TPM), ln_tx_length=ln(spliced_length_nt). Include intercept. Apply TPM>=1 and complete-case criteria exactly; fail on invalid/nonfinite covariates, missing gene/tx, or rank deficiency. No transcript weights are used.
+
+Before nonlinear fits, verify the processed-input checksum, exact ordered ORF/transcript/gene membership and every stored M0 summary field against separately supplied references. Data and reference results are not bundled with the public code. Baseline cluster correction is use_correction=True, df_correction=True, use_t=True; 95% t intervals and p values use G-1 inference degrees of freedom. Full R2 and adjusted R2 are in-sample OLS diagnostics.
+
+
+## Natural cubic spline and knots
+
+Use installed patsy.cr (natural cubic regression spline, second derivatives zero at boundary knots; linear outside boundaries), not existing patsy.bs. Centering constraint absorbs the constant; include the model intercept only once. Main smooth df=4 excludes the intercept and includes 1 linear + 3 nonlinear dimensions. Sensitivity smooth df=3 and 5, respectively 1+2 and 1+4 dimensions. For each variable and cell use empirical quantiles of transformed covariates across the fixed ORF cohort (unweighted ORF rows, including repeated hosts). Use numpy.quantile(method='linear'): interior probabilities j/d, j=1,...,d-1, boundary probabilities 0 and 1. Thus df4 interior 25%,50%,75%; df3 1/3,2/3; df5 20%,40%,60%,80%. Record exact transformed and inverse-transformed knot values and boundaries. If knots coincide or basis rank fails, stop and report; do not silently alter knots.
+
+Implementation: construct centered cr basis B with explicit knots/bounds. Regress B on [1,x] using full-cohort covariates only; form R=B-[1,x]A. SVD of R retains exactly d-1 nonzero dimensions; rotate/scale these to unit RMS. Include original x plus these nonlinear columns in the regression. This is an invertible reparameterization of the natural spline space with intercept, not an additional spline or duplicate linear term. Verify column-space equality to [1,B], nonlinear-column orthogonality to [1,x], and linear null reconstruction. Retain mappings for prediction and subset fits; save parameters. Spline choices use covariates only and are fixed before fitting nonlinear outcomes.
+
+M0: intercept+ln_rbp+ln_aa+gc+ln_tpm+ln_tx_length.
+M1: M0 plus TPM nonlinear components.
+M2: M0 plus host-length nonlinear components.
+M3: M0 plus both nonlinear component blocks.
+Fit all M1–M3 at df 4 (primary), 3 and 5 (sensitivity). No interactions, no penalties, no best-df selection. All full-cohort models use identical rows.
+
+## Inference and nonlinear tests
+
+Unweighted OLS, gene cluster covariance and finite-sample correction exactly as baseline. Report beta_R, SE, 95% CI, p, ORF/host/gene counts, G-1 df, R2/adjusted R2, signed delta beta and absolute magnitude, relative change (beta-beta_M0)/abs(beta_M0).
+
+For each included smooth test ONLY its d-1 nonlinear coefficients jointly zero, retaining its linear term and all other covariates. M3 tests each nonlinear block conditional on the other, plus joint null of both blocks. Use cluster-robust Wald F=(R beta)'(R V R')^-1(R beta)/q with numerator df=q and denominator df=G-1, and verify covariance contrast rank. This compares the spline to the nested linear restriction, not a test of no overall variable effect. All p values nominal and exploratory; report all df/models/tests, no smallest-p selection.
+
+## Diagnostics and sensitivity analyses
+
+Record design rank, raw and standardized-nonconstant-column condition numbers, max leverage and number above 2p/n and 3p/n, residual diagnostics and full observation-level leverage/Cook distance (OLS screening only, not cluster-calibrated inference). Record unique-host distributions and TPM/length versus nRBP Spearman correlations (descriptive). Plot all hosts in log axes or transformed coordinates.
+
+Influence: for M0 and main-df4 M3, exact leave-one-GENE-out coefficient estimates, keeping full-cohort spline knots/mappings; save every gene's deletion effect and range. No deletion is used to redefine the main cohort. Tail sensitivity rules (covariate-only): compute unweighted unique-host empirical 99th percentile (linear interpolation) for TPM, host RNA length, nRBP separately. Remove all ORFs from any gene with a host strictly above each threshold; also remove the union. Include ties at the threshold. Refit M0 and df4 M3 for each rule, retaining original spline bases/knots; report all included and excluded counts, beta/CI/p, changes versus corresponding full-cohort model and within-subset M0. No other outcome/leverage-based exclusion.
+
+Curves: M0 and df4 M3 conditional mean predictions for TPM or host length at other covariates' unique-host medians (ORF length at ORF median), RBP fixed at median host nRBP. Vary transformed target only within observed min/max, show pointwise cluster-robust t 95% intervals, shade outside host 1st–99th percentile as sparse tails, add host rug/histogram. These combinations may be uncommon: conditional descriptive curves, not causal effects or externally validated predictions; no extrapolation beyond observed bounds.
+

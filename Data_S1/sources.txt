@@ -1,0 +1,71 @@
+DATA SOURCES
+
+ORF catalogue: Mudge et al. (2022), doi:10.1038/s41587-022-01369-0,
+supplementary MOESM2.
+https://static-content.springer.com/esm/art%3A10.1038%2Fs41587-022-01369-0/MediaObjects/41587_2022_1369_MOESM2_ESM.xlsx
+
+Genome annotation and transcript/protein sequences: GENCODE human release 35.
+https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_35/
+
+RBP functional annotations: Van Nostrand et al. (2020),
+doi:10.1038/s41586-020-2077-3, supplementary MOESM3.
+https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-020-2077-3/MediaObjects/41586_2020_2077_MOESM3_ESM.xlsx
+
+eCLIP: ENCODE experiment/file accessions and the fixed peak inventory are
+required in the separately supplied analysis/results/eclip_manifest.tsv.
+analysis/scripts/build_eclip_manifest.py can obtain an inventory from ENCODE;
+a newly queried inventory may differ from the historical analysis inputs.
+https://www.encodeproject.org/
+
+Transcript RNA abundance: ENCODE RSEM files ENCFF720TFN and ENCFF522DDA
+(K562 polyA+, ENCSR000AEO), ENCFF458NJB and ENCFF371KBB
+(HepG2 polyA+, ENCSR985KAT). The K562 total-RNA sensitivity uses
+ENCFF012LGS and ENCFF714FKW (ENCSR109IQO).
+
+Ribosome P-site tracks: Calviello et al. (2020), GEO GSE129061.
+https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE129061
+The processed tracks pool biological replicates.
+
+Knockdown RNA-seq: ENCODE accessions in the separately supplied
+analysis/data/kd/kd_manifest.tsv;
+RSEM quantifications are used. The outcome is RNA abundance.
+
+Protein-property prediction: metapredict 3.0.2, disorder network V3;
+sequence-only catGRANULE 2.0 Random Forest with only_pc=True.
+catGRANULE source: Monti et al. (2025), doi:10.1186/s13059-025-03497-7.
+Environments: analysis/environments/. Primary data and third-party model
+files must be obtained separately. This code-only distribution does not contain
+observation tables, fitted-model outputs or figure files. Scripts require their
+documented inputs; some later analyses also require intermediate tables produced
+by earlier scripts or supplied through restricted reviewer access.
+
+MEASUREMENTS
+
+The main catalogue comprises replicated Mudge S2 ORFs of <=100 amino acids.
+Mudge S2/S3 denote source sheets, not this article's supplement numbering.
+Model-specific filters are applied separately in K562 and HepG2.
+
+Host binding counts distinct RBPs with a same-strand eCLIP peak overlapping
+a host-transcript exon, not peaks or binding strength.
+
+The occupancy response is log2(in-frame RPF count+1), not protein yield.
+log1p(x)=ln(1+x); binding is ln(1+distinct host RBP count). Abundance is
+transcript TPM. Host length is mature spliced RNA length in nucleotides,
+not genomic span. GC is the fraction of G+C in the whole host transcript,
+not ORF GC. ORF length is in amino acids.
+
+Disorder is mean per-residue metapredict score; pLDDT is a predicted
+confidence proxy. The fraction of ORFs passing a mean-disorder threshold
+is not a per-ORF residue fraction. Structural SD/SD coefficients standardize
+both outcome and predictor; canonical outcome-SD-scaled coefficients do not.
+
+ANALYSIS CONVENTIONS
+
+TPM >=1 was selected after an abundance sweep. Equivalence, host-length,
+corrected-reference and local-identity analyses are post hoc, not externally
+preregistered. Model formulas, population selection, confidence-interval
+conventions and multiplicity families are retained in the corresponding
+specification.json files, equivalence specification and analysis code.
+Incremental R-squared uses identical rows in full and reduced models.
+Refitting pooled-track observations does not recover biological-replicate
+uncertainty or establish causal RBP effects.

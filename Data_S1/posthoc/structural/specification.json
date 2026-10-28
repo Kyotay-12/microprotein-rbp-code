@@ -1,0 +1,23 @@
+{
+  "question": "How does mature host-transcript length adjustment affect total-RBP-binding associations with predicted pLDDT and catGRANULE?",
+  "status": "Post hoc sensitivity analysis; not preregistered.",
+  "outcomes": {"mean_plddt": "pLDDT", "catgranule2_llps_score": "catGRANULE"},
+  "population": "S2 ORFs of <=100 amino acids. Within each cell, remove missing TPM, distinct host-transcript RBP count, transcript GC and amino-acid length. Do NOT apply TPM>=1. Then remove missing outcome separately. Verify original population against followup14_equivalence.csv.",
+  "single_ORF_subset": "Transcripts with exactly one analysed ORF after per-cell original covariate completeness, before outcome-specific exclusion, matching followup14.",
+  "standardization": "Sample SD (ddof=1) for outcome, log1p(host distinct-RBP count), log(ORF AA length), transcript GC, log1p(TPM), and log(mature host length). Compute separately within each outcome/cell/scheme population. Single-ORF subset is re-standardized as in the original implementation. Preserve the identical rows and scales across original/linear-length/spline models.",
+  "models": {
+    "original": "zy ~ zrbp + zlen + zgc + ztpm",
+    "plus_log_length": "zy ~ zrbp + zlen + zgc + ztpm + zhostlen",
+    "plus_length_spline": "zy ~ zrbp + zlen + zgc + ztpm + bs(zhostlen, df=4, degree=3, include_intercept=False)"
+  },
+  "length": "Positive mature spliced transcript nt length, from all main-catalogue host metadata. Independently require equality with actual GENCODE v35 FASTA sequence length for every main host ENST. No missing-value imputation or genomic-span substitution.",
+  "schemes": ["transcript", "gene", "single_ORF", "HC3"],
+  "inference": "OLS coefficient; CR1 cluster SE (transcript primary, stable ENSG gene sensitivity, transcript clusters for single-ORF subset), HC3 reference. t intervals and TOST use clusters minus one df, or n minus rank(X) for HC3. For exact legacy consistency preserve normal-based ordinary difference p in p_difference_normal, and additionally record explicitly separate p_difference_t. Original verdict convention uses the normal difference p.",
+  "bounds": {"primary": 0.10, "stringent": 0.05},
+  "alpha": 0.05,
+  "TOST": "Two one-sided t tests; p_TOST=max(p_lower,p_upper). Equivalence at alpha=.05 is equivalent to the pointwise 90% CI lying strictly within the chosen margins. Report 90% and 95% CIs.",
+  "multiplicity": "For each model adjustment separately, Holm across the four primary transcript-clustered TOST p-values at margin +/-0.10 (2 cells x 2 outcomes), matching the original four-test family. Primary new sensitivity is plus_log_length. Spline is separately reported sensitivity, not pooled into a selected best model. +/-0.05 and non-primary schemes are pointwise sensitivity results. No claim of familywise correction across every sensitivity condition.",
+  "conjunction": "Both raw and Holm-corrected all-four-primary-model pass indicators are reported for each adjustment; report all results, including failures.",
+  "legacy_validation": "All 16 original scheme/outcome/cell rows must reproduce n, cluster n, beta, SE, 90/95 CIs, ordinary normal p, TOST p-values, decisions and primary Holm p within numerical tolerance.",
+  "limits": "The margins are conventional practical thresholds, not biologically established tolerances. This addresses specified linear log-RBP associations with two predicted continuous outcomes, not nonlinear RBP associations, binary properties, all individual RBPs, measured protein structure or causal mechanisms. The structural and occupancy populations remain different."
+}

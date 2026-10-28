@@ -1,0 +1,45 @@
+{
+  "status": "Post hoc implementation correction; not preregistered.",
+  "primary_policy_name": "all_tags__preserve_PAR__corrected_codon_length__phase_aware",
+  "selection": {
+    "gene_type": "protein_coding",
+    "tags": "Read every repeated tag from original GENCODE v35 GTF. Detect appris_principal_1 by exact membership, never by the final tag alone.",
+    "identifiers": "Remove only the numeric version suffix; preserve _PAR_Y. Keep raw IDs, stable IDs, chromosome and strand. No cross-locus CDS or exon concatenation.",
+    "representative": "One transcript per stable gene identifier including the PAR_Y distinction. Rank principal-1 first, then descending CDS nucleotide length, then ascending stable transcript ID for deterministic ties. Select representative before the length filter, as in the legacy design.",
+    "length": "floor(sum of nonoverlapping CDS nucleotide intervals / 3), without another stop-codon subtraction. Range 100 through 1500 inclusive, as in the existing reference design. This is a codon-length proxy for partial CDS, not an assertion that every partial annotation exactly equals FASTA protein length.",
+    "legacy": "Explicit named axes last/all tags, collapse/preserve PAR and legacy/corrected length reconstruct eight source-selection variants. Historical ties follow the historical implementation when checking exact legacy reproduction."
+  },
+  "counting": {
+    "geometry": "Each stable transcript must have a single chromosome, strand and stable gene, nonoverlapping CDS blocks and available matching source tracks. Missing/invalid records receive an explicit reason and are excluded from models; missing values are never encoded as zero.",
+    "phase": "For transcription-ordered CDS blocks and first GTF phase p, count P-site positions with (cumulative spliced position - p) mod 3 = 0. Every later block phase must equal (p - cumulative preceding CDS length) mod 3. First partial codon is not treated as a complete codon. Retain phase-valid incomplete CDS in the primary models with explicit flags; strict-complete sensitivity is separate.",
+    "binding": "Same strand-matched eCLIP overlap with mature transcript exons and distinct RBP count as the existing analysis, but separated by PAR-preserving transcript ID.",
+    "TPM": "Use the four complete raw ENCODE RSEM tables specified by followup10, normalize with the PAR-preserving helper, sum only genuine same-stable-ID entries within replicate, then average two replicate TPM values using their shared identifiers. X and PAR_Y are not combined in the corrected canonical reference. Preserve the historical summation only in explicitly legacy analyses.",
+    "properties": "Use actual GENCODE v35 protein sequences with metapredict 3.0.2. Exclude X/U or other nonstandard residues exactly as the prior property analysis. Reuse predictions only when sequence content and predictor version/implementation are verified identical; predict genuinely new sequences. Record sequence hashes and cache provenance."
+  },
+  "canonical_models": {
+    "occupancy": "log2(in-frame CDS P-site count + 1) ~ ln(1 + distinct RBP count) + ln(CDS codon-length proxy) + transcript GC + ln(1 + TPM); TPM >= 1; OLS HC3, normal-reference 95% CI and two-sided p, per cell line.",
+    "properties": "mean predicted pLDDT or mean disorder ~ ln(1 + distinct RBP count) + ln(CDS codon-length proxy) + transcript GC + ln(1 + TPM); complete cases without TPM>=1 restriction; OLS HC3, normal-reference 95% CI and two-sided p, per cell line.",
+    "incremental_fit": "Full minus reduced ordinary R-squared, with the binding term removed from the reduced model and identical rows.",
+    "sensitivities": [
+      "strict complete CDS only (no cds_start_NF/cds_end_NF, 3-nt start and stop, initial phase zero and all phases consistent, CDS nt divisible by 3)",
+      "exclude both X and Y copies of pseudoautosomal transcript/gene pairs, not just the _PAR_Y records"
+    ],
+    "comparison": "Canonical models keep original covariates without mature host-RNA length. Their coefficient ratio with host-length-adjusted microprotein coefficients is not a mechanistic attenuation rate."
+  },
+  "within_host": {
+    "population": "Original Mudge S2 <=100-aa main ORFs; exact PAR-preserving host ENST match to the corrected selected canonical reference; original ncORF properties, binding, counts, abundance and validated mature RNA lengths remain unchanged. Primary uORF with no own-CDS overlap, TPM>=1 separately per cell; uORF+dORF sensitivity.",
+    "models": "Retain the four existing model outcomes, original/log-host-length/four-df cubic-spline adjustments, CR1 transcript and gene inference with t(G-1), 95% intervals, ratio pseudocount 0.5 and existing two-cell Holm family for the principal uORF log-length CDS-conditional coefficient.",
+    "propagation": "Rebuild the selected-host cohort rather than silently retaining the legacy representative selection. Report entrants, exits and same-row intersection comparisons to separate population and value effects. Coordinate-conservative complete-CDS sensitivity retains the earlier geometric criteria. Use corrected CDS codon length throughout new models; preserve legacy paired models separately.",
+    "limits": "No causal direct-effect claim, no inference of preferential translation from aggregate binding, no unique isoform assignment claim, no recovered replicate-level variation, and no equivalence conclusion from a nonsignificant coefficient."
+  },
+  "validation": [
+    "Independent GTF parsing without importing producer selection functions",
+    "Legacy table and model reproduction within documented floating-point tolerance",
+    "PAR-preserving key bijection and per-transcript single-locus checks on real source IDs",
+    "All-tag membership, representative ranking, deterministic tie and length-window checks",
+    "Phase/count checks against raw tracks including real partial and PAR records",
+    "Complete raw RSEM join and predictor sequence provenance",
+    "Independent least-squares HC3 reconstruction of all six primary canonical models",
+    "Same-host population and model verification with recorded source hashes"
+  ]
+}

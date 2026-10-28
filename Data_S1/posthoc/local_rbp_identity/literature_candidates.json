@@ -1,0 +1,42 @@
+{
+  "purpose": "Candidate rationale, not evidence for regulation of the study ncORFs",
+  "trigger": {
+    "doi": "10.1126/sciadv.aee5884",
+    "url": "https://www.science.org/doi/10.1126/sciadv.aee5884",
+    "scope": "Mouse Malat1 B1-SINE IRES, Rack1 and hnRNP A2/B1; neither present in current study eCLIP manifest"
+  },
+  "candidates": [
+    {
+      "rbp": "PTBP1",
+      "doi": "10.1128/MCB.21.10.3364-3374.2001",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC100258/",
+      "title": "Protein Factor Requirements of the Apaf-1 Internal Ribosome Entry Segment: Roles of Polypyrimidine Tract Binding Protein and upstream of N-ras",
+      "evidence": "Recombinant PTB/unr supplementation and cell experiments support APAF1 IRES function. PTB binding depends on unr in this system.",
+      "limit": "Target-specific cellular IRES, not general ncORF or microprotein mechanism; do not equate PTBP1 with neuronal PTBP2."
+    },
+    {
+      "rbp": "HNRNPC",
+      "doi": "10.1128/MCB.23.2.708-720.2003",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC151538/",
+      "title": "Heterogeneous Nuclear Ribonucleoprotein C Modulates Translation of c-myc mRNA in a Cell Cycle Phase-Dependent Manner",
+      "evidence": "Binding to a U-rich c-MYC IRES region, recombinant protein and binding-site mutant experiments; cell-cycle-dependent activity.",
+      "limit": "Canonical MYC and specific cell-cycle context, not study ncORFs."
+    },
+    {
+      "rbp": "DDX3X",
+      "doi": "10.1093/nar/gkab287",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8136831/",
+      "title": "DDX3 depletion represses translation of mRNAs with complex 5′ UTRs",
+      "evidence": "Ribosome profiling, RNA-seq, PAR-CLIP and reporter work support transcript-selective translation dependence and structured5′UTR involvement.",
+      "limit": "Not IRES-specific and not microprotein-specific; measured occupancy here is observational and not a DDX3 depletion experiment."
+    },
+    {
+      "rbp": "HNRNPA1",
+      "doi": "10.1074/jbc.M411492200",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/15525641/",
+      "title": "Heterogeneous nuclear ribonucleoprotein A1 is a novel internal ribosome entry site trans-acting factor that modulates alternative initiation of translation of the fibroblast growth factor2 mRNA",
+      "evidence": "FGF2 IRES binding, recombinant complementation and siRNA experiments support target-specific initiation involvement.",
+      "limit": "Distinct from HNRNPA2B1. Direction may vary by target; no generic promotion hypothesis."
+    }
+  ]
+}

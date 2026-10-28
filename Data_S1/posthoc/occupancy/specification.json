@@ -1,0 +1,21 @@
+{
+  "question": "How does adjustment for mature host-transcript length affect the association between host-transcript RBP burden and ncORF ribosome occupancy?",
+  "status": "Post hoc sensitivity analysis; not preregistered.",
+  "population": "Original S2 main catalogue, amino-acid length <=100, and each cell's own TPM>=1 and complete original model inputs. Do not use a both-cell intersection or the clustering subset.",
+  "outcome": "log2(in-frame ORF RPF count + 1)",
+  "exposure": "log1p(distinct RBPs detected across host-transcript exons), original all-assayed panel per cell",
+  "original_covariates": ["log(ORF amino-acid length)", "host-transcript GC fraction", "log1p(host-transcript polyA TPM)"],
+  "length": "Mature spliced transcript length in nucleotides. Recompute from the GENCODE v35 transcript FASTA and require exact agreement with prior exon-union length for every main host ENST. Never substitute genomic span.",
+  "primary_sensitivity": "Original model + log(mature transcript length)",
+  "additional_sensitivities": [
+    "Original model + cubic B-spline of log(mature transcript length), df=4, include_intercept=False",
+    "Original model + log(mature transcript length) + fixed effects for five transcript-length quantile groups",
+    "Original model + log(mature transcript length) + categorical ORF biotype",
+    "Original model + log(mature transcript length), restricted to transcripts carrying exactly one analysed ORF in the per-cell model population",
+    "Original model + log(mature transcript length), fitted separately in the five length groups"
+  ],
+  "length_groups": "Per-cell quintile boundaries calculated on unique host transcripts, not duplicated ORF rows; all ORFs on one transcript share a group.",
+  "inference": "OLS point estimates; CR1 transcript and stable-ENSG gene-clustered standard errors, finite-sample corrections and t intervals with cluster-count minus one degrees of freedom. 95% intervals are pointwise sensitivity summaries, not selection-adjusted confirmation.",
+  "report": ["Same-row baseline replication against followup11", "beta and 95% CI", "incremental R-squared from adding the RBP term to otherwise identical covariates", "relative coefficient change", "binding VIF", "length-versus-binding Spearman correlation on unique hosts", "all model results without result-dependent selection"],
+  "limits": "Adjustment tests dependence on measured transcript length under specified models; it does not remove all unmeasured confounding, recover biological replication, or establish causation or ORF-selective regulation."
+}

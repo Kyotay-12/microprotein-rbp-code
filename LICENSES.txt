@@ -1,0 +1,14 @@
+LICENCE SCOPE
+
+Original Python code is distributed under the MIT licence in
+Data_S1/LICENSE-CODE, covering the respective contributions of Kyota Yasuda
+and Masashi Fujii. Methodological documentation and specifications are covered
+by CC BY 4.0 as reproduced in Data_S1/LICENSE-CONTENT.
+
+This source-code distribution contains no empirical datasets or stored analysis
+results. These licences do not relicense any separately supplied data or
+third-party software. Source datasets and software retain their original terms
+and citation requirements; see Data_S1/sources.txt.
+
+The CC BY 4.0 legal code is reproduced without modification from:
+https://creativecommons.org/licenses/by/4.0/legalcode.txt

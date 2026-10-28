@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+title: "Microprotein host-RNA analysis: source code"
+message: "Please cite the exact source-code version used in your analysis."
+type: software
+authors:
+  - family-names: Yasuda
+    given-names: Kyota
+    affiliation: >-
+      Program of Mathematical and Life Sciences, Graduate School of Integrated
+      Sciences for Life, Hiroshima University
+  - family-names: Fujii
+    given-names: Masashi
+    affiliation: >-
+      Program of Mathematical and Life Sciences, Graduate School of Integrated
+      Sciences for Life, Hiroshima University
+keywords:
+  - microproteins
+  - RNA-binding proteins
+  - ribosome profiling
+  - reproducibility

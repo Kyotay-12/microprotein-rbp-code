@@ -1,0 +1,49 @@
+EQUIVALENCE ANALYSIS
+
+This analysis was specified after the ordinary regression estimates and
+confidence intervals had been inspected. It is post hoc, not externally
+preregistered.
+
+Outcomes are mean predicted pLDDT and catGRANULE score. Binary foldable and
+LLPS-prone outcomes are not included. Complete cases are selected separately
+by cell line from the main structural-analysis population.
+No TPM >=1 cutoff is applied.
+
+The original model is:
+z(outcome) ~ z(ln(1+host RBP count)) + z(ln(ORF amino-acid length))
+             + z(host-transcript GC) + z(ln(1+TPM)).
+
+Each quantity is standardized within its cell-specific analysis population,
+separately for each outcome and scheme, using the sample SD (ddof=1).
+The binding coefficient is outcome SD per SD of transformed binding.
+Canonical coefficients divided only by the outcome SD are not comparable
+SD-per-SD effects and do not calibrate the equivalence bounds.
+
+The primary bound is +/-0.10 SD/SD; +/-0.05 is a sensitivity bound. These are
+practical interpretation thresholds, not biologically validated cutoffs.
+The primary covariance estimator clusters by host transcript. Sensitivities
+use stable ENSG clusters, transcripts with exactly one analysed ORF, or HC3.
+
+TOST uses alpha=0.05. For an individual unadjusted model, equivalence requires
+the 90% confidence interval to fall within the chosen bounds. Difference from
+zero and equivalence are distinct: a detectable association can be equivalent
+within a chosen margin; nonsignificance alone does not establish equivalence.
+
+The primary family has four outcome-by-cell models. Holm correction is applied
+to their TOST p-values (the larger one-sided p-value) at the +/-0.10 bound.
+The two one-sided tests form one equivalence test, not two comparisons.
+The primary overall equivalence claim requires all four primary models to meet
+the criterion; unadjusted and Holm-adjusted decisions are reported separately.
+Alternative covariance/population schemes and +/-0.05 are sensitivity analyses,
+not additional members of this primary family.
+
+Report coefficients, 90%/95% intervals, one-sided p-values, both bounds'
+decisions and cluster counts. A supported bound is not proof of zero association.
+For the subsequent host-length adjustments, use the separate model definitions
+and adjustment-specific families in posthoc/structural/specification.json.
+
+Original implementation: analysis/scripts/followup14_equivalence.py.
+Generated output: analysis/results/followup14_equivalence.csv.
+Host-length generated output: posthoc/structural/results.json.
+These result files are not included in the code-only distribution; they are
+generated after the documented analysis inputs have been supplied.

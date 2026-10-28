@@ -1,0 +1,65 @@
+{
+  "analysis": "Start-proximal RBP identity conditional on host and local RBP richness",
+  "status": "Post hoc exploratory analysis motivated by Xiao et al. 2026; not preregistered or independent confirmation.",
+  "candidate_selection": "Four non-exhaustive literature-motivated examples with primary experimental evidence for cellular RNA translation initiation/IRES involvement and eCLIP assayed in BOTH study cell lines. Chosen from literature and assay inventory, not ranked by existing project coefficients or p values. This is not a systematic survey of all translation factors.",
+  "candidates": [
+    "PTBP1",
+    "HNRNPC",
+    "DDX3X",
+    "HNRNPA1"
+  ],
+  "cells": [
+    "K562",
+    "HepG2"
+  ],
+  "not_substitutes": "HNRNPA2B1 and RACK1 from the mouse Malat1 study are absent from the current assay manifest. HNRNPA1 is not a surrogate for HNRNPA2B1. This analysis does not replicate the Malat1 mechanism or identify an IRES.",
+  "population": "Per-cell complete_window_eligible cohort, with no additional outcome threshold. Main S2 <=100aa, TPM>=1, valid mature transcript geometry, full U and D windows. Genuine zero RPF counts retained.",
+  "geometry": "Mature RNA 0-based half-open U=[start-100,start), D=[start,start+100). D starts at ORF start, not ORF end. Same-strand >=1nt overlap with exon blocks. Whole host means all mature-transcript exons. Union labels across each RBP's original peak files, no additional peak filter. PAR_Y-preserving stable IDs; ambiguous keys fail.",
+  "identity_indicators": "B=any candidate binding on host exons. A_U/A_D=any candidate binding in U/D. Enforce A_U<=B, A_D<=B. H/U/D richness includes the candidate. Five disjoint categories: B=0, B=1 U=D=0, U-only, D-only, both. Host can contribute multiple ORFs and categories; category cluster counts need not sum.",
+  "predictor_only_phase": "Read only explicitly named predictor/eligibility columns, never RPF columns. Reconstruct whole-host identities from original GTF and peaks, verify all H counts, candidate U/D against frozen local labels, and compare whole-host edge cache only as an independent cross-check. Record source hashes, candidate counts and designs before outcome access.",
+  "design_guards": {
+    "min_unique_transcripts_and_genes_per_group": 20,
+    "groups": [
+      "B=1 and A_U=1",
+      "B=1 and A_D=1",
+      "B=1 and A_U=A_D=0"
+    ],
+    "B0_rule": "If B is variable, require >=20 unique transcripts and genes in B=0 as well. If B=1 throughout, omit only the constant B column and log that this is a host-bound population; never omit a local indicator.",
+    "local_added_rank": 2,
+    "min_effective_clusters_each_residual_svd_direction": 20,
+    "max_residual_information_share_any_cluster": 0.2,
+    "information_definition": "Residualize A_U/A_D on M0. Let Q be the two orthonormal left singular vectors. For each direction and transcript/gene grouping, w_g=sum Q_ig^2; effective=1/sum w_g^2. Also require max eigenvalue(Q_g'Q_g)<=0.20 for every cluster, a basis-invariant bound for any direction. Require full design rank and rank increment2 with tolerance on original feature scale. Record normalized condition number, no outcome-based exclusion.",
+    "interpretation": "Pragmatic sparse-support and information-concentration guards, not a power calculation, equivalence boundary, or guarantee of reliable finite-sample inference. Failed tests remain in the report; no relaxing thresholds, candidate replacement, window search, or 1df rescue. Same guards apply to sensitivity designs."
+  },
+  "outcome": "log2(in-frame ORF RPF count+1)",
+  "M0": [
+    "intercept",
+    "ln1p(H)",
+    "ln(AA_length)",
+    "host_GC_fraction",
+    "ln1p(TPM)",
+    "ln(mature_host_RNA_length)",
+    "ln1p(U_richness)",
+    "ln1p(D_richness)",
+    "B"
+  ],
+  "M1": "M0 + A_U + A_D, exactly same rows. Each candidate fitted separately; not jointly adjusting all four candidate identities.",
+  "primary_test": "Per candidate-cell, nondirectional joint H0 A_U=A_D=0, OLS CR1 transcript-cluster covariance factor G/(G-1)*(N-1)/(N-K), WaldF2,G-1 approximation. 95% individual coefficient CIs use t(G-1) and are nominal. Cluster count is not replicate count.",
+  "multiplicity": "One fixed family of eight planned candidate-by-cell primary joint tests. Untestable slots count conservatively as1 ONLY for Holm bookkeeping; never report that as an observed p value. Retain all eight statuses. Sensitivity families use their own labelled eight-slot corrections and are not independent confirmations. Do not compare significance across cells as a cell interaction test.",
+  "effect_sizes": "Same-row delta_R2=(SSE0-SSE1)/SST; partial_R2=(SSE0-SSE1)/SSE0 reported separately. No prediction/generalization claim, no cross-population R2 comparison.",
+  "sensitivities": [
+    "Same full cohort and M0/M1 plus categorical ORF biotype and linear relative_start=t_start/tx_length in both models",
+    "Restrict to B=1 hosts, drop constant B, same remaining M0/M1",
+    "Stable ENSG gene-cluster inference on each valid design"
+  ],
+  "sensitivity_rule": "Only base-eligible candidate-cell pairs considered; sensitivity must independently pass predeclared support/rank/concentration guards. If not, report not estimable. Baseline collinear categorical dummies may be deterministically omitted with explicit names; never omit A_U/A_D or nonconstant B.",
+  "not_planned": [
+    "FE outcome models",
+    "new window widths",
+    "RNA structure prediction",
+    "IRES prediction",
+    "sequence interactions",
+    "cross-validation"
+  ],
+  "limitations": "Composition-conditional observational association, not pure local action. H and local richness include each candidate. eCLIP may reflect nuclear processing; shared exons do not prove isoform-specific binding. Outcome is ribosome occupancy, not protein yield. Unmeasured sequence/local composition, co-binding, assay sensitivity, and reverse causation remain. Nonsignificance does not establish absence or equivalence. Scope limited to four literature-selected RBPs and full100nt windows."
+}
